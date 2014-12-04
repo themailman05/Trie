@@ -15,17 +15,36 @@ was used while completing this assignment.
 class Trie:
     """Trie class that supports spell checking and auto-completion"""
 
+    class _Node:
+        """Underlying node class for each char in Trie"""
+
+        def __init__(self, char, isword):
+            self.char = char
+            self.isword = isword
+            self.outgoing = {}
+
     def __init__(self):
         """Create a new empty Trie."""
-        raise NotImplementedError
+        self._root = self._Node(None, True)
+        self._size = 0
 
     def __len__(self):
         """Return the number of words stored in this Trie"""
-        raise NotImplementedError
+        return self._size
 
     def __contains__(self, word):
         """Return True if the word is in the Trie, False otherwise."""
-        raise NotImplementedError
+
+        intrie = True
+        cur = self._root
+        for ii in range(len(word)):
+            letter = word[ii]
+            if letter in cur.outgoing:
+                cur = cur.outgoing[letter]
+            else:
+                intrie = False
+                break
+        return intrie
 
     def __iter__(self):
         """
@@ -40,7 +59,18 @@ class Trie:
         effect if the word is already in the Trie.
         No Return value.
         """
-        raise NotImplementedError
+        if word not in self:
+            cur = self._root
+            for ii in range(len(word)):
+                letter = word[ii]
+                if letter not in cur.outgoing:
+                    cur.outgoing[letter] = self._Node(letter, False)
+                    cur = cur.outgoing[letter]
+                elif letter in cur.outgoing:
+                    cur = cur.outgoing[letter]
+            cur.isword = True
+            self._size += 1
+
 
     def contains_prefix(self, prefix):
         """
