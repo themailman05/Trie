@@ -11,7 +11,6 @@ All code was written by the submitter, and no unauthorized assistance
 was used while completing this assignment.
 
 """
-from collections import deque
 
 class Trie:
     """Trie class that supports spell checking and auto-completion"""
