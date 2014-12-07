@@ -97,7 +97,6 @@ class Trie:
         Return True if the indicated string is a word in the Trie or
         is a prefix of any word in the Trie. Return False otherwise.
         """
-        """Return True if the word is in the Trie, False otherwise."""
         word = prefix.lower()
         intrie = True
         cur = self._root
