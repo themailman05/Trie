@@ -11,6 +11,7 @@ All code was written by the submitter, and no unauthorized assistance
 was used while completing this assignment.
 
 """
+from collections import deque
 
 class Trie:
     """Trie class that supports spell checking and auto-completion"""
@@ -24,12 +25,11 @@ class Trie:
             self.isword = isword
             self.outgoing = {}
 
+
     def __init__(self):
         """Create a new empty Trie."""
-        self._root = self._Node(None, True)
+        self._root = self._Node(None, False)
         self._size = 0
-        self._alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
-            'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', "'"]
 
     def __len__(self):
         """Return the number of words stored in this Trie"""
@@ -56,21 +56,22 @@ class Trie:
         Return an iterator that will allow iteration of all words in
         the Trie in lexicographical order
         """
-        cur = self._root
-        yield self.recurse_helper("", cur)
+        root = self._root
+        if len(self) > 0:
+            for node in self._recurse_helper("", root):
+                yield node
 
-    def recurse_helper(self, wordchunk, node):
-        for letter in self._alphabet:
-            if letter in node.outgoing:
-                if node.outgoing[letter].isword:
-                    node = node.outgoing[letter]
-                    return wordchunk + letter
-                    self.recurse_helper(wordchunk+letter,node)
-                else:
-                    node = node.outgoing[letter]
-                    self.recurse_helper(wordchunk+letter, node)
-
-
+    def _recurse_helper(self, wordchunk, node):
+        """
+        recursive helper method for traversing the trie in alphabetical
+        order.
+        """
+        if node.isword:
+            yield wordchunk
+        for letter in sorted(node.outgoing):
+            for word in self._recurse_helper(str(wordchunk)+str(letter),
+                                             node.outgoing[letter]):
+                yield word
 
 
     def insert(self, word):
@@ -91,7 +92,6 @@ class Trie:
                     cur = cur.outgoing[letter]
             cur.isword = True
             self._size += 1
-
 
     def contains_prefix(self, prefix):
         """
@@ -123,4 +123,5 @@ class Trie:
             letter = pref[ii]
             if letter in cur.outgoing:
                 cur = cur.outgoing[letter]
-        self.recurse_helper(pref, cur)
+        for node in self._recurse_helper(pref, cur):
+                yield node
